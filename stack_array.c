@@ -1,86 +1,73 @@
-#include<stdio.h>
-#include<conio.h>
-#include<stdlib.h>
-#define size 2
-int st[size];
+// C program to create a stack with given capacity
+#include <stdio.h>
+#include <stdlib.h>
 
-int top=-1;
+struct Stack {
+    int top, cap;
+    int *a;
+};
 
-void push(int item)
-{
-	top++;
-	st[top] = item;
-}
-   int peek()
-   {
-   	return st[top];
-   }
-int pop()
-{
-	int item;
-	item = st[top];
-	top--;
-	return(item);
+struct Stack* createStack(int cap) {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    stack->cap = cap;
+    stack->top = -1;
+    stack->a = (int*)malloc(cap * sizeof(int));
+    return stack;
 }
 
-void display()
-{
-	int i;
-	for(i=top;i>=0;i--)
-	  printf("\n%d",st[i]);
+void deleteStack(struct Stack* stack) {
+    free(stack->a);
+    free(stack);
 }
 
-int main()
-{
-	int item,choice;
-	char ans;
-	printf("\n\tImplementation of stack");
-	do{
-	    printf("\nMain Menu");
-		printf("\n1.push \n2.pop \n3.peek \n4.display \n5.exit");
-		printf("\nEnter Your choice");
-		scanf("%d",&choice);
-		switch(choice){
-		
-		case 1:
-			if(top<size-1)
-			{
-				printf("\Enter the item to be pushed");
-				scanf("%d",&item);
-				push(item);
-			}
-			else
-			printf("overflow");
-			break;
-			case 2:
-				if(top==-1)
-				printf("underflow");
-				else
-				{
-					item=peek();
-					printf("The top most element is %d",item);
-					
-				}
-				break;
-				case 3:
-					if(top==-1)
-					printf("underflow");
-					else
-					{
-						item=peek();
-						printf("The top most element is %d",item);
-					}
-					break;
-				    case 4:
-					    display();
-					    break;
-					    case 5:
-						    exit(0);
-	}			
-	printf("\nDo you want to continue?");
-	ans=getche();
+int isFull(struct Stack* stack) {
+    return stack->top >= stack->cap - 1;
 }
-while(ans=='Y'||ans =='Y');
-return 0;
-	
+
+int isEmpty(struct Stack* stack) {
+    return stack->top < 0;
+}
+
+int push(struct Stack* stack, int x) {
+    if (isFull(stack)) {
+        printf("Stack Overflow\n");
+        return 0;
+    }
+    stack->a[++stack->top] = x;
+    return 1;
+}
+
+int pop(struct Stack* stack) {
+    if (isEmpty(stack)) {
+        printf("Stack Underflow\n");
+        return 0;
+    }
+    return stack->a[stack->top--];
+}
+
+int peek(struct Stack* stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is Empty\n");
+        return 0;
+    }
+    return stack->a[stack->top];
+}
+
+int main() {
+    struct Stack* s = createStack(5);
+    push(s, 10);
+    push(s, 20);
+    push(s, 30);
+    printf("%d popped from stack\n", pop(s));
+
+    printf("Top element is: %d\n", peek(s));
+
+    printf("Elements present in stack: ");
+    while (!isEmpty(s)) {
+        printf("%d ", peek(s));
+        pop(s);
+    }
+
+    deleteStack(s);
+    return 0;
 }
